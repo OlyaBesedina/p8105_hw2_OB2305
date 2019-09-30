@@ -1,0 +1,16 @@
+---
+title: "p8105_hw2_ob2305"
+author: "Olya Besedina"
+date: 2019-09-30
+output: github_document
+---
+
+```{r setup, include = FALSE}
+library(tidyverse)
+```
+
+# Problem 1
+```{r}
+
+```
+
