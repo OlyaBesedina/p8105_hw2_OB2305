@@ -57,7 +57,6 @@ prec_2018 = read_excel(
   mutate( 
     month = month.name[month],
     year = "2018")
-
 ```
 
 Join two data sets
@@ -65,13 +64,8 @@ Join two data sets
 ```{r}
 prec_data = full_join(prec_2017, prec_2018, by = c("month", "total", "year"))
 
-total_prec_2018 =filter(prec_2018, year == "2018") %>% 
-
-  
-  
-mutate = sum(total)
-
-colSums(total_prec_2018, total)
+total_prec_2018 =filter(prec_2018, year == "2018")
+sum(pull(total_prec_2018, total))
 ```
 
 
