@@ -7,10 +7,79 @@ output: github_document
 
 ```{r setup, include = FALSE}
 library(tidyverse)
+library(readxl)
 ```
 
 # Problem 1
 ```{r}
+mr_trash = read_excel(
+  path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+  col_names = TRUE,
+  sheet = "Mr. Trash Wheel", 
+  skip = 0,
+  range = "A2:N408") %>% 
+  janitor::clean_names() %>% 
+  drop_na() %>% 
+  mutate(
+    sports_balls = round(sports_balls),
+    sports_balls = as.integer(sports_balls)
+  )
 
 ```
+
+Precipitation data for 2017
+
+```{r}
+prec_2017 = read_excel(
+  path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+  sheet = "2017 Precipitation",
+  col_names = TRUE,
+  range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  drop_na(total) %>% 
+  mutate( 
+    month = month.name[month],
+    year = "2017")
+
+head(prec_2018)
+```
+
+Precipitation data for 2018
+
+```{r}
+prec_2018 = read_excel(
+  path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
+  sheet = "2018 Precipitation",
+  col_names = TRUE,
+  range = "A2:B14") %>% 
+  janitor::clean_names() %>% 
+  drop_na(total)%>% 
+  mutate( 
+    month = month.name[month],
+    year = "2018")
+
+```
+
+Join two data sets
+
+```{r}
+prec_data = full_join(prec_2017, prec_2018, by = c("month", "total", "year"))
+
+total_prec_2018 =filter(prec_2018, year == "2018") %>% 
+
+  
+  
+mutate = sum(total)
+
+colSums(total_prec_2018, total)
+```
+
+
+
+
+
+
+
+
+
 
