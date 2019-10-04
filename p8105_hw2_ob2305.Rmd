@@ -25,6 +25,9 @@ mr_trash = read_excel(
     sports_balls = as.integer(sports_balls)
   )
 
+sports_balls_2017 = filter(mr_trash, year == "2017")
+  median(pull(sports_balls_2017, sports_balls))
+
 ```
 
 Precipitation data for 2017
@@ -41,7 +44,6 @@ prec_2017 = read_excel(
     month = month.name[month],
     year = "2017")
 
-head(prec_2018)
 ```
 
 Precipitation data for 2018
@@ -68,12 +70,72 @@ total_prec_2018 =filter(prec_2018, year == "2018")
 sum(pull(total_prec_2018, total))
 ```
 
+Add description
 
+# Problem 2
 
+Importing Pols-month dataset
 
+```{r}
+pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(mon, into = c("year", "month", "day")) %>%
+  mutate(
+    month = as.integer(month),
+    month = month.name[month],
+    president = recode(prez_gop, `0` = "Democrat", `1` = "Republican")) %>% 
+  select(-prez_gop, -prez_dem, -day)
 
+head(pols_month)
 
+```
 
+Importing snp dataset
 
+```{r}
+snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
+  janitor::clean_names() %>% 
+  separate(date, into = c("month", "day", "year")) %>% 
+  select(year, month, everything(), -day) %>% 
+  arrange(year, month) %>% 
+  mutate(
+    month = as.integer(month),
+    month = month.name[month]
+  )
+head(snp)
 
+```
 
+Importing Unemployment
+```{r}
+unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(jan:dec,
+               names_to = "month",
+               values_to = "unemployment_rate") %>% 
+  mutate(
+    month = recode(month, `jan` = "1", `feb` = "2", `mar` = "3", `apr` = "4", `may` = "5", `jun` = "6", `jul` = "7", `aug` = "8", `sep` = "9", `oct` = "10", `nov` = "11", `dec` = "12"),
+    month = as.factor(month),
+    month = month.name[month],
+    year = as.character(year)) 
+
+head(unemployment)
+
+```
+
+Joining snp and pols data sets
+
+```{r}
+result = left_join(pols_month, snp, by = c("year" = "year", "month" = "month"))
+result1 = left_join(result, unemployment, by = c("year" = "year", "month" = "month")) 
+```
+
+```{r}
+#First data set represends the number of democratic and republican presidents, representatives, governors and senators for every month from 1947 to 2015. During this time the number of gop governors ranged between `r range(pull(pols_month, gov_gop))`, gop senators - `r range(pull(pols_month, sen_gop))`, gop representatives - `r range(pull(pols_month, rep_gop))`; democratic governors ranged between `r range(pull(pols_month, goc_dem))`, democratic senators - `r range(pull(pols_month, sen_dem))`, democratic representatives - `r range(pull(pols_month, rep_dem))`.
+
+#snp data  set contains data that represends closing values of S&P stock index (variable name "close" for every month from `r min(pull(snp, year))` to `r max(pull(snp, year))`.  
+
+#Unemployment data set contains wide data that represends unemployment rates for every month from the beggining of `r min(pull(unemployment, year))` to the end of `r max(pull(unemployment, year))`. The mean unemployment rate through out this time is `r mean(pull(unemployment, unemployment_rate))`.
+
+#These three data sets were joined together using left_join function by the year and month variables.
+```
