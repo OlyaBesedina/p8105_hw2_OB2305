@@ -133,13 +133,36 @@ result1 = left_join(result, unemployment, by = c("year" = "year", "month" = "mon
 
 # Problem 3
 ```{r}
-names = read_csv("./data/Popular_Baby_Names.csv") %>% 
+b_names = read_csv("./data/Popular_Baby_Names.csv") %>% 
   janitor::clean_names() %>%
-  drop_na()
+  drop_na() %>% 
+  distinct() %>% 
+  mutate(
+    childs_first_name = str_to_lower(childs_first_name),
+    gender = str_to_lower(gender),
+    ethnicity = str_to_lower(ethnicity)) %>% 
+  group_by(year_of_birth) 
 
-
-
-
+view(b_names) 
 
 
 ```
+
+Table showing the rank in popularity of the name "Olivia"
+
+```{r}
+olivia = b_names %>% 
+  filter(childs_first_name == "olivia", gender == "female") %>% 
+  select(-gender, -childs_first_name, -count) %>% 
+  pivot_wider(
+    names_from = "year_of_birth",
+    values_from = "rank") %>% 
+  knitr::kable(digits = 0)
+```
+
+
+
+
+
+
+
