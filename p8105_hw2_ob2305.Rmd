@@ -85,9 +85,6 @@ pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
     month = month.name[month],
     president = recode(prez_gop, `0` = "Democrat", `1` = "Republican")) %>% 
   select(-prez_gop, -prez_dem, -day)
-
-head(pols_month)
-
 ```
 
 Importing snp dataset
@@ -100,10 +97,7 @@ snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>%
   arrange(year, month) %>% 
   mutate(
     month = as.integer(month),
-    month = month.name[month]
-  )
-head(snp)
-
+    month = month.name[month])
 ```
 
 Importing Unemployment
@@ -118,9 +112,6 @@ unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
     month = as.factor(month),
     month = month.name[month],
     year = as.character(year)) 
-
-head(unemployment)
-
 ```
 
 Joining snp and pols data sets
@@ -138,4 +129,17 @@ result1 = left_join(result, unemployment, by = c("year" = "year", "month" = "mon
 #Unemployment data set contains wide data that represends unemployment rates for every month from the beggining of `r min(pull(unemployment, year))` to the end of `r max(pull(unemployment, year))`. The mean unemployment rate through out this time is `r mean(pull(unemployment, unemployment_rate))`.
 
 #These three data sets were joined together using left_join function by the year and month variables.
+```
+
+# Problem 3
+```{r}
+names = read_csv("./data/Popular_Baby_Names.csv") %>% 
+  janitor::clean_names() %>%
+  drop_na()
+
+
+
+
+
+
 ```
