@@ -11,7 +11,7 @@ library(readxl)
 ```
 
 # Problem 1
-```{r}
+```{r, cache=TRUE}
 mr_trash = read_excel(
   path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
   col_names = TRUE,
@@ -140,8 +140,13 @@ b_names = read_csv("./data/Popular_Baby_Names.csv") %>%
   mutate(
     childs_first_name = str_to_lower(childs_first_name),
     gender = str_to_lower(gender),
-    ethnicity = str_to_lower(ethnicity)) %>% 
-  group_by(year_of_birth) 
+    ethnicity = str_to_lower(ethnicity),
+    ethnicity = recode(ethnicity, 
+                       "asian and pacific islander" = "asian and paci",
+                       "black non hispanic" = "black non hisp",
+                       "white non hispanic" = "white non hisp"))
+
+
 
 view(b_names) 
 
@@ -155,11 +160,25 @@ olivia = b_names %>%
   filter(childs_first_name == "olivia", gender == "female") %>% 
   select(-gender, -childs_first_name, -count) %>% 
   pivot_wider(
+    names_from = year_of_birth,
+    values_from = rank) %>% 
+  knitr::kable(digits = 0)
+
+olivia
+```
+
+Popularity of boys names over time
+```{r}
+pop_boys_names = b_names %>% 
+  filter(childs_first_name == "ethan",gender == "male") %>% 
+  select(-gender, -childs_first_name, -count) %>% 
+  pivot_wider(
     names_from = "year_of_birth",
     values_from = "rank") %>% 
   knitr::kable(digits = 0)
-```
 
+pop_boys_names
+```
 
 
 
