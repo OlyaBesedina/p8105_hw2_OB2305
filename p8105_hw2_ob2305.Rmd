@@ -11,7 +11,7 @@ library(readxl)
 ```
 
 # Problem 1
-```{r, cache=TRUE}
+```{r, cache=TRUE, message = FALSE, warning = FALSE}
 mr_trash = read_excel(
   path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
   col_names = TRUE,
@@ -26,13 +26,11 @@ mr_trash = read_excel(
   )
 
 sports_balls_2017 = filter(mr_trash, year == "2017")
-  median(pull(sports_balls_2017, sports_balls))
-
 ```
 
 Precipitation data for 2017
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 prec_2017 = read_excel(
   path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
   sheet = "2017 Precipitation",
@@ -44,11 +42,13 @@ prec_2017 = read_excel(
     month = month.name[month],
     year = "2017")
 
+prec_2017
+
 ```
 
 Precipitation data for 2018
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 prec_2018 = read_excel(
   path = "./data/Trash-Wheel-Collection-Totals-8-6-19.xlsx",
   sheet = "2018 Precipitation",
@@ -58,25 +58,27 @@ prec_2018 = read_excel(
   drop_na(total)%>% 
   mutate( 
     month = month.name[month],
-    year = "2018")
+    year = "2018") 
+
+prec_2018
 ```
 
 Join two data sets
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 prec_data = full_join(prec_2017, prec_2018, by = c("month", "total", "year"))
+head(prec_data)
 
 total_prec_2018 =filter(prec_2018, year == "2018")
-sum(pull(total_prec_2018, total))
 ```
 
-Add description
+Data set prec_2017 shows the level of precipitation in inches for 2017; data set prec_2018 shows the same for 2018. Data set prec_data shows the same information, but in one combined table. Total precipitation for 2018 was equal to `r sum(pull(total_prec_2018, total))`. The median number of sports balls in dumpster in 2017 was equal to `r median(pull(sports_balls_2017, sports_balls))`.
 
 # Problem 2
 
 Importing Pols-month dataset
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>% 
   janitor::clean_names() %>% 
   separate(mon, into = c("year", "month", "day")) %>%
@@ -89,7 +91,7 @@ pols_month = read_csv("./data/fivethirtyeight_datasets/pols-month.csv") %>%
 
 Importing snp dataset
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>% 
   janitor::clean_names() %>% 
   separate(date, into = c("month", "day", "year")) %>% 
@@ -101,7 +103,7 @@ snp = read_csv("./data/fivethirtyeight_datasets/snp.csv") %>%
 ```
 
 Importing Unemployment
-```{r}
+```{r, message = FALSE, warning = FALSE}
 unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>% 
   janitor::clean_names() %>% 
   pivot_longer(jan:dec,
@@ -116,23 +118,23 @@ unemployment = read_csv("./data/fivethirtyeight_datasets/unemployment.csv") %>%
 
 Joining snp and pols data sets
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 result = left_join(pols_month, snp, by = c("year" = "year", "month" = "month"))
 result1 = left_join(result, unemployment, by = c("year" = "year", "month" = "month")) 
 ```
 
-```{r}
-#First data set represends the number of democratic and republican presidents, representatives, governors and senators for every month from 1947 to 2015. During this time the number of gop governors ranged between `r range(pull(pols_month, gov_gop))`, gop senators - `r range(pull(pols_month, sen_gop))`, gop representatives - `r range(pull(pols_month, rep_gop))`; democratic governors ranged between `r range(pull(pols_month, goc_dem))`, democratic senators - `r range(pull(pols_month, sen_dem))`, democratic representatives - `r range(pull(pols_month, rep_dem))`.
 
-#snp data  set contains data that represends closing values of S&P stock index (variable name "close" for every month from `r min(pull(snp, year))` to `r max(pull(snp, year))`.  
+First data set represends the number of democratic and republican presidents, representatives, governors and senators for every month from 1947 to 2015. During this time the number of gop governors ranged between: `r range(pull(pols_month, gov_gop))`, gop senators: `r range(pull(pols_month, sen_gop))`, gop representatives: `r range(pull(pols_month, rep_gop))`; democratic governors ranged between `r range(pull(pols_month, gov_dem))`, democratic senators: `r range(pull(pols_month, sen_dem))`, democratic representatives: `r range(pull(pols_month, rep_dem))`.
 
-#Unemployment data set contains wide data that represends unemployment rates for every month from the beggining of `r min(pull(unemployment, year))` to the end of `r max(pull(unemployment, year))`. The mean unemployment rate through out this time is `r mean(pull(unemployment, unemployment_rate))`.
+snp data  set contains data that represends closing values of S&P stock index (variable name "close" for every month from `r min(pull(snp, year))` to `r max(pull(snp, year))`.  
 
-#These three data sets were joined together using left_join function by the year and month variables.
-```
+Unemployment data set contains wide data that represends unemployment rates for every month from the beggining of `r min(pull(unemployment, year))` to the end of `r max(pull(unemployment, year))`. The mean unemployment rate through out this time is `r mean(pull(unemployment, unemployment_rate))`.
+
+These three data sets were joined together using left_join function by the year and month variables.
+
 
 # Problem 3
-```{r}
+```{r, message = FALSE, warning = FALSE}
 b_names = read_csv("./data/Popular_Baby_Names.csv") %>% 
   janitor::clean_names() %>%
   drop_na() %>% 
@@ -142,9 +144,9 @@ b_names = read_csv("./data/Popular_Baby_Names.csv") %>%
     gender = str_to_lower(gender),
     ethnicity = str_to_lower(ethnicity),
     ethnicity = recode(ethnicity, 
-                       "asian and pacific islander" = "asian and paci",
-                       "black non hispanic" = "black non hisp",
-                       "white non hispanic" = "white non hisp"))
+                       "asian and paci" = "asian and pacific islander",
+                       "black non hisp" = "black non hispanic",
+                       "white non hisp" = "white non hispanic"))
 
 
 
@@ -155,7 +157,7 @@ view(b_names)
 
 Table showing the rank in popularity of the name "Olivia"
 
-```{r}
+```{r, message = FALSE, warning = FALSE}
 olivia = b_names %>% 
   filter(childs_first_name == "olivia", gender == "female") %>% 
   select(-gender, -childs_first_name, -count) %>% 
@@ -168,18 +170,29 @@ olivia
 ```
 
 Popularity of boys names over time
-```{r}
+
+```{r, message = FALSE, warning = FALSE}
 pop_boys_names = b_names %>% 
   filter(childs_first_name == "ethan",gender == "male") %>% 
   select(-gender, -childs_first_name, -count) %>% 
   pivot_wider(
     names_from = "year_of_birth",
     values_from = "rank") %>% 
-  knitr::kable(digits = 0)
+  knitr::kable(digits = 0) 
 
 pop_boys_names
 ```
 
+Scatter plot for male, white non-hispanic children born in 2016. 
+
+```{r, message = FALSE, warning = FALSE}
+plot_data = b_names %>% 
+  filter(gender == "male", year_of_birth == "2016", ethnicity == "white non hispanic") %>% 
+  select(childs_first_name, count, rank) 
+
+  ggplot(plot_data,aes( x = rank, y = count))+
+  geom_point()
+```
 
 
 
